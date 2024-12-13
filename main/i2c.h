@@ -2,7 +2,7 @@
 
 #include "driver/gpio.h"
 
-#define I2C_FREQ_HZ    100000    // 100 kHz I2C frequency
+#define I2C_FREQ_HZ    10000    // 100 kHz I2C frequency
 #define I2C_DELAY_US   (1000000 / I2C_FREQ_HZ / 2)
 
 typedef struct {

@@ -2,6 +2,66 @@
 
 #include "i2c.h"
 
+int read_temp(i2c_device_t *i2c, int *result) {
+    printf("Odczyt temperatury\n");
+    i2c_start(&i2c);
+    if (!i2c_write_byte(&i2c, (0x40 << 1) | 0x0)) {
+        printf("Brak ACK\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+    printf("Odczyt temperatury: wysłano adres i polecenie pisania\n");
+
+    if (!i2c_write_byte(&i2c, 0xE3)) {
+        printf("Brak ACK\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+    printf("Odczyt temperatury: wysłano polecenie odczytu temperatury\n");
+
+    if (!i2c_write_byte(&i2c, (0x40 << 1) | 0x1)) {
+        printf("Brak ACK\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+    printf("Odczyt temperatury: wysłano odres i polecenie czytania\n");
+    uint8_t received_data = i2c_read_byte(&i2c, false);
+    uint8_t received_data2 = i2c_read_byte(&i2c, false);
+    uint8_t received_data3 = i2c_read_byte(&i2c, true);
+    i2c_stop(&i2c);
+    *result = (received_data << 6) | (received_data2 >> 2);
+    return 0;
+}
+
+int read_hum(i2c_device_t *i2c, int *result) {
+    printf("Próba pisania\n");
+    i2c_start(&i2c);
+    if (!i2c_write_byte(&i2c, (0x40 << 1) | 0x0)) {
+        printf("Brak ACK\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+    if (!i2c_write_byte(&i2c, 0xE3)) {
+        printf("Brak ACK, komenda\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+
+    printf("Próba czytania\n");
+    i2c_start(&i2c);
+    if (!i2c_write_byte(&i2c, (0x40 << 1) | 0x1)) {
+        printf("Brak ACK\n");
+        i2c_stop(&i2c);
+        return 1;
+    }
+    uint8_t received_data = i2c_read_byte(&i2c, false);
+    uint8_t received_data2 = i2c_read_byte(&i2c, false);
+    uint8_t received_data3 = i2c_read_byte(&i2c, true);
+    i2c_stop(&i2c);
+    *result = (received_data << 6) | (received_data2 >> 2);
+    return 0;
+}
+
 static void i2c_delay() {
     esp_rom_delay_us(I2C_DELAY_US);
 }
