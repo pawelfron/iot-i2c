@@ -2,8 +2,9 @@
 
 #include "driver/gpio.h"
 
-#define I2C_FREQ_HZ    10000    // 100 kHz I2C frequency
+#define I2C_FREQ_HZ    100000    // 100 kHz I2C frequency
 #define I2C_DELAY_US   (1000000 / I2C_FREQ_HZ / 2)
+#define I2C_SLAVE_ADDR  0x76
 
 typedef struct {
     gpio_num_t sda_pin;
